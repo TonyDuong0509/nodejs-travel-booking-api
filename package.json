@@ -1,0 +1,27 @@
+{
+  "name": "travel-booking",
+  "version": "1.0.0",
+  "description": "Travel Booking project Nodejs - Express - MongoDB",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "author": "Francis Duong",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-async-errors": "^3.1.1",
+    "http-status-codes": "^2.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.2",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.9.15",
+    "validator": "^13.12.0"
+  }
+}
