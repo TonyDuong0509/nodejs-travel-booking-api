@@ -11,6 +11,9 @@ if (process.env.NODE === "DEVELOPMENT") {
 
 // Routes
 const authRoute = require("./routes/authRoute");
+const categoryRoute = require("./routes/categoryRoute");
+const hotelRoute = require("./routes/hotelRoute");
+const roomRoute = require("./routes/roomRoute");
 
 // Middlewares
 const notFoundMiddleware = require("./middlewares/not-found");
@@ -20,6 +23,9 @@ app.use(express.json());
 app.use(cookieParser(process.env.JWT_TOKEN_SECRET));
 
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/category", categoryRoute);
+app.use("/api/v1/hotel", hotelRoute);
+app.use("/api/v1/room", roomRoute);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

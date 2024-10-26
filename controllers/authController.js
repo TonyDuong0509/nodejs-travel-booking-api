@@ -2,6 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const CustomAPIError = require("./../errors");
 const User = require("./../models/UserModel");
 const UserToken = require("./../models/UserToken");
+const Hotel = require("./../models/HotelModel");
 const crypto = require("crypto");
 const {
   createTokenUser,
@@ -9,9 +10,10 @@ const {
   sendVerificationEmail,
   validateMongoId,
 } = require("./../utils/index");
+const slugify = require("slugify");
 
 const register = async (req, res) => {
-  const { fullName, phone, email, password, role } = req.body;
+  const { fullName, phone, address, email, password, role } = req.body;
 
   const existingEmail = await User.findOne({ email: email });
   if (existingEmail) {
@@ -30,11 +32,19 @@ const register = async (req, res) => {
   const user = await User.create({
     fullName,
     phone,
+    address,
     email,
     password,
     role: userRole,
     verificationToken,
   });
+
+  if (role === "Hotel") {
+    await Hotel.create({
+      slug: slugify(fullName, { lower: true }),
+      user: user._id,
+    });
+  }
 
   await sendVerificationEmail({
     name: user.fullName,
