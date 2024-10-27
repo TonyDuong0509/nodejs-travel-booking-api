@@ -2,6 +2,7 @@ const { createToken, isValidToken, attachCookieToResponse } = require("./jwt");
 const validateMongoId = require("./validateMongoId");
 const createTokenUser = require("./createTokenUser");
 const sendVerificationEmail = require("./sendVerificationEmail");
+const queryHelper = require("./queryHelper");
 
 module.exports = {
   createToken,
@@ -10,4 +11,5 @@ module.exports = {
   validateMongoId,
   createTokenUser,
   sendVerificationEmail,
+  queryHelper,
 };

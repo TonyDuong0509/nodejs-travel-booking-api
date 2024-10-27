@@ -2,7 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const CustomAPIError = require("./../errors");
 const Category = require("./../models/CategoryModel");
 const slugify = require("slugify");
-const { validateMongoId } = require("./../utils/index");
+const { validateMongoId, queryHelper } = require("./../utils/index");
 
 const create = async (req, res) => {
   const { name } = req.body;
@@ -27,8 +27,20 @@ const update = async (req, res) => {
 };
 
 const getAll = async (req, res) => {
-  const categories = await Category.find();
-  res.status(StatusCodes.OK).json({ categories });
+  const {
+    models: categories,
+    total,
+    page,
+    limit,
+  } = await queryHelper(
+    req,
+    Category,
+    null,
+    null,
+    "-_id -createdAt -updatedAt"
+  );
+
+  res.status(StatusCodes.OK).json({ total, page, limit, categories });
 };
 
 const getById = async (req, res) => {

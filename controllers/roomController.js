@@ -1,6 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const CustomAPIError = require("./../errors");
-const { validateMongoId } = require("./../utils/index");
+const { validateMongoId, queryHelper } = require("./../utils/index");
 const User = require("./../models/UserModel");
 const Room = require("./../models/RoomModel");
 const Hotel = require("./../models/HotelModel");
@@ -38,14 +38,27 @@ const getAllByHotelId = async (req, res) => {
   const { hotelId } = req.params;
   validateMongoId(hotelId);
 
-  const rooms = await Room.find({ hotel: hotelId }).select("-_id -hotel");
+  const {
+    models: rooms,
+    total,
+    page,
+    limit,
+  } = await queryHelper(
+    req,
+    Room,
+    "roomType",
+    {
+      hotel: hotelId,
+    },
+    "-_id -hotel -updatedAt"
+  );
   if (rooms.length === 0) {
     throw new CustomAPIError.NotFoundError(
       "This hotel does not have any room, please choose another hotel"
     );
   }
 
-  res.status(StatusCodes.OK).json({ rooms, count: rooms.length });
+  res.status(StatusCodes.OK).json({ total, page, limit, rooms });
 };
 
 const getById = async (req, res) => {

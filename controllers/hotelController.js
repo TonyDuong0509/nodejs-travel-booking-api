@@ -2,22 +2,27 @@ const { StatusCodes } = require("http-status-codes");
 const CustomAPIError = require("./../errors");
 const User = require("./../models/UserModel");
 const Hotel = require("./../models/HotelModel");
-const { validateMongoId } = require("./../utils/index");
+const { validateMongoId, queryHelper } = require("./../utils/index");
 const slugify = require("slugify");
 
 const getAll = async (req, res) => {
-  const hotels = await Hotel.find()
-    .populate({
+  const {
+    models: hotels,
+    total,
+    page,
+    limit,
+  } = await queryHelper(req, Hotel, null, {}, "-_id -updatedAt", [
+    {
       path: "user",
       select: "fullName phone email address -_id",
-    })
-    .populate({
+    },
+    {
       path: "category",
-      select: "name -_id",
-    })
-    .select("-_id -updatedAt");
+      select: "name slug -_id",
+    },
+  ]);
 
-  res.status(StatusCodes.OK).json({ hotels });
+  res.status(StatusCodes.OK).json({ total, page, limit, hotels });
 };
 
 const getById = async (req, res) => {
