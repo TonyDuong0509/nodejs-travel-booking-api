@@ -32,9 +32,10 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["Admin", "Hotel", "User"],
+      enum: ["Admin", "Hotel", "Customer"],
       required: true,
     },
+    avatar: String,
     verificationToken: String,
     isVerified: {
       type: Boolean,

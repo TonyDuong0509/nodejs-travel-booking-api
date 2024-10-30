@@ -2,7 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const CustomAPIError = require("./../errors");
 const Category = require("./../models/CategoryModel");
 const slugify = require("slugify");
-const { validateMongoId, queryHelper } = require("./../utils/index");
+const { queryHelper } = require("./../utils/index");
 
 const create = async (req, res) => {
   const { name } = req.body;
@@ -14,7 +14,6 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   const { categoryId } = req.params;
-  validateMongoId(categoryId);
   const { name } = req.body;
   const slug = slugify(name);
   const category = await Category.findByIdAndUpdate(
@@ -40,19 +39,21 @@ const getAll = async (req, res) => {
     "-_id -createdAt -updatedAt"
   );
 
+  if (!categories || categories.length === 0) {
+    throw new CustomAPIError.NotFoundError("Does not have any category");
+  }
+
   res.status(StatusCodes.OK).json({ total, page, limit, categories });
 };
 
 const getById = async (req, res) => {
   const { categoryId } = req.params;
-  validateMongoId(categoryId);
   const category = await Category.findById({ _id: categoryId });
   res.status(StatusCodes.OK).json({ category });
 };
 
 const destroy = async (req, res) => {
   const { categoryId } = req.params;
-  validateMongoId(categoryId);
   await Category.findByIdAndDelete({ _id: categoryId });
   res.status(StatusCodes.NO_CONTENT).json({ message: "Deleted successfully" });
 };

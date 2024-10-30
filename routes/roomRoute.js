@@ -23,5 +23,15 @@ router.post(
   [authenticateUser, authorizePermission("Admin", "Hotel")],
   roomController.create
 );
+router.post(
+  "/upload-images",
+  [authenticateUser, authorizePermission("Admin", "Hotel")],
+  roomController.uploadImages
+);
+router.post(
+  "/upload-logo",
+  [authenticateUser, authorizePermission("Admin", "Hotel")],
+  roomController.uploadLogo
+);
 
 module.exports = router;

@@ -3,12 +3,12 @@ const CustomAPIError = require("./../errors");
 const User = require("./../models/UserModel");
 const UserToken = require("./../models/UserToken");
 const Hotel = require("./../models/HotelModel");
+const Customer = require("./../models/CustomerModel");
 const crypto = require("crypto");
 const {
   createTokenUser,
   attachCookieToResponse,
   sendVerificationEmail,
-  validateMongoId,
 } = require("./../utils/index");
 const slugify = require("slugify");
 
@@ -23,7 +23,7 @@ const register = async (req, res) => {
   }
   const isFirstAccount = (await User.countDocuments()) === 0;
   const userRole = isFirstAccount ? "Admin" : role;
-  if (!isFirstAccount && (!role || !["Hotel", "User"].includes(role))) {
+  if (!isFirstAccount && (!role || !["Hotel", "Customer"].includes(role))) {
     throw new CustomAPIError.BadRequestError("Please provide valid role value");
   }
 
@@ -42,6 +42,12 @@ const register = async (req, res) => {
   if (role === "Hotel") {
     await Hotel.create({
       slug: slugify(fullName, { lower: true }),
+      user: user._id,
+    });
+  }
+
+  if (role === "Customer") {
+    await Customer.create({
       user: user._id,
     });
   }
@@ -131,7 +137,6 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   const { userId } = req.user;
-  validateMongoId(userId);
 
   await UserToken.findOneAndDelete({ user: userId });
   await User.updateOne({ _id: userId }, { $set: { isLogged: false } });

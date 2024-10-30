@@ -2,8 +2,13 @@ const { StatusCodes } = require("http-status-codes");
 const CustomAPIError = require("./../errors");
 const User = require("./../models/UserModel");
 const Hotel = require("./../models/HotelModel");
-const { validateMongoId, queryHelper } = require("./../utils/index");
+const {
+  queryHelper,
+  handleUploadImage,
+  handleUploadManyImages,
+} = require("./../utils/index");
 const slugify = require("slugify");
+const path = require("path");
 
 const getAll = async (req, res) => {
   const {
@@ -22,12 +27,15 @@ const getAll = async (req, res) => {
     },
   ]);
 
+  if (!hotels || hotels.length === 0) {
+    throw new CustomAPIError.NotFoundError("Does not have any hotel");
+  }
+
   res.status(StatusCodes.OK).json({ total, page, limit, hotels });
 };
 
 const getById = async (req, res) => {
   const { hotelId } = req.params;
-  validateMongoId(hotelId);
 
   const hotel = await Hotel.findById({ _id: hotelId })
     .populate({
@@ -45,11 +53,9 @@ const getById = async (req, res) => {
 
 const editProfile = async (req, res) => {
   const { userId } = req.user;
-  validateMongoId(userId);
 
   const { description, categoryId, phone, address, fullName, highlights } =
     req.body;
-  validateMongoId(categoryId);
 
   const user = await User.findById({ _id: userId });
   const hotel = await Hotel.findOne({ user: user._id });
@@ -81,4 +87,51 @@ const editProfile = async (req, res) => {
   res.status(StatusCodes.OK).json({ info });
 };
 
-module.exports = { editProfile, getAll, getById };
+const uploadImages = async (req, res) => {
+  await handleUploadManyImages(req, "hotel", Hotel);
+
+  res
+    .status(StatusCodes.OK)
+    .json({ message: "Upload images hotel successfully" });
+};
+
+const updateImageFeatured = async (req, res) => {
+  const { userId } = req.user;
+  const { imageUrl } = req.body;
+
+  const user = await User.findById({ _id: userId, "images.url": imageUrl });
+  const hotel = await Hotel.findOne({ user: user._id });
+
+  if (!hotel) {
+    throw new CustomAPIError.NotFoundError(
+      `Not found hotel with this ID: ${user._id}`
+    );
+  }
+
+  const image = hotel.images.find((img) => img.url === imageUrl);
+  if (image) {
+    image.isFeatured = !image.isFeatured;
+    await hotel.save();
+  }
+
+  res
+    .status(StatusCodes.OK)
+    .json({ message: "Updated featured image successfully" });
+};
+
+const uploadLogo = async (req, res) => {
+  await handleUploadImage(req, "hotelLogo", User);
+
+  res.status(StatusCodes.OK).json({
+    message: "Upload logo hotel successfully",
+  });
+};
+
+module.exports = {
+  editProfile,
+  getAll,
+  getById,
+  uploadImages,
+  updateImageFeatured,
+  uploadLogo,
+};
