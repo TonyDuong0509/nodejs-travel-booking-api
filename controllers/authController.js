@@ -5,6 +5,7 @@ const UserToken = require("./../models/UserToken");
 const Hotel = require("./../models/HotelModel");
 const Customer = require("./../models/CustomerModel");
 const crypto = require("crypto");
+const passport = require("passport");
 const {
   createTokenUser,
   attachCookieToResponse,
@@ -153,4 +154,14 @@ const logout = async (req, res) => {
   res.status(StatusCodes.OK).json({ message: "User logged out" });
 };
 
-module.exports = { register, verifyEmail, login, logout };
+const googleAuth = passport.authenticate("google", {
+  scope: ["profile", "email"],
+});
+
+module.exports = {
+  register,
+  verifyEmail,
+  login,
+  logout,
+  googleAuth,
+};

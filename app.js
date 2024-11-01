@@ -3,8 +3,22 @@ const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
+const session = require("express-session");
+const passport = require("passport");
+require("./utils/passport-setup");
 
 const app = express();
+
+app.use(
+  session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 if (process.env.NODE === "DEVELOPMENT") {
   app.use(morgan("dev"));
