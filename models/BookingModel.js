@@ -19,9 +19,9 @@ const BookingSchema = new mongoose.Schema(
       enum: ["Pending", "Canceled", "Success"],
       default: "Pending",
     },
-    // paymentIntentId: {
-    //   type: String,
-    // },
+    paymentIntentId: {
+      type: String,
+    },
     user: {
       type: mongoose.Types.ObjectId,
       ref: "User",
