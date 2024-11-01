@@ -24,12 +24,18 @@ const create = async (req, res) => {
   }
   const hotel = await Hotel.findOne({ user: user._id });
 
-  const availability = [
-    {
-      date: new Date(Date.now() + 1000 * 60 * 60 * 7),
+  const availability = [];
+  const today = new Date();
+  const daysToAdd = 365;
+
+  for (let i = 0; i < daysToAdd; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    availability.push({
+      date: date,
       status: "available",
-    },
-  ];
+    });
+  }
 
   const room = await Room.create({
     name,

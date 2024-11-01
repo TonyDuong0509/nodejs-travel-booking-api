@@ -6,7 +6,7 @@ const BookingSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    check: {
+    checkOut: {
       type: Date,
       required: true,
     },
@@ -16,12 +16,12 @@ const BookingSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Failed", "Success", "Canceled"],
+      enum: ["Pending", "Canceled", "Success"],
       default: "Pending",
     },
-    paymentIntentId: {
-      type: String,
-    },
+    // paymentIntentId: {
+    //   type: String,
+    // },
     user: {
       type: mongoose.Types.ObjectId,
       ref: "User",
@@ -30,6 +30,11 @@ const BookingSchema = new mongoose.Schema(
     room: {
       type: mongoose.Types.ObjectId,
       ref: "Room",
+      required: true,
+    },
+    hotel: {
+      type: mongoose.Types.ObjectId,
+      ref: "Hotel",
       required: true,
     },
   },

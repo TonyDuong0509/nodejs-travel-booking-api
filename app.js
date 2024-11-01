@@ -18,6 +18,7 @@ const roomRoute = require("./routes/roomRoute");
 const customerRoute = require("./routes/customerRoute");
 const reviewRoute = require("./routes/reviewRoute");
 const bookingRoute = require("./routes/bookingRoute");
+const notificationRoute = require("./routes/notificationRoute");
 
 // Middlewares
 const notFoundMiddleware = require("./middlewares/not-found");
@@ -35,6 +36,7 @@ app.use("/api/v1/room", roomRoute);
 app.use("/api/v1/customer", customerRoute);
 app.use("/api/v1/review", reviewRoute);
 app.use("/api/v1/booking", bookingRoute);
+app.use("/api/v1/notification", notificationRoute);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

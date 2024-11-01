@@ -5,6 +5,7 @@ const queryHelper = require("./queryHelper");
 const handleUploadImage = require("./handleUploadImage");
 const handleUploadManyImages = require("./handleUploadManyImages");
 const checkPermissions = require("./checkPermissions");
+const sendEmail = require("./sendEmail");
 
 module.exports = {
   createToken,
@@ -16,4 +17,5 @@ module.exports = {
   handleUploadImage,
   handleUploadManyImages,
   checkPermissions,
+  sendEmail,
 };
